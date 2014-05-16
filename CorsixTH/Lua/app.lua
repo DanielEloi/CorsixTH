@@ -31,6 +31,8 @@ local assert, io, type, dofile, loadfile, pcall, tonumber, print, setmetatable
 
 local SAVEGAME_VERSION = 83
 
+
+--! A class used to manage the command line, the configurations, the running state, the event handlers and other general parameters.
 class "App"
 
 function App:App()
@@ -57,6 +59,11 @@ function App:App()
   self.check_for_updates = true
 end
 
+--! Takes a command line and processes it.
+--! The command line must be a "setting=value". The value passed will be assigned to the command line setting depicted.
+--! param ...(string) The command on the format "setting=value"
+--! possible command line setting strings: "config-file" - the path and filename of the configuration file (if none, default is "config.txt") 
+--! return nothing
 function App:setCommandLine(...)
   self.command_line = {...}
   for i, arg in ipairs(self.command_line) do
@@ -66,6 +73,19 @@ function App:setCommandLine(...)
     end
   end
 end
+
+--! This is the entry point, where the major systems, configurations and files are loaded.
+--! Starts the app. Prints a welcome screen on the console.
+--! Reads the config file, that may have been set on the command line (if not, default is "config.txt"). 
+--! Loads the settings from the config file onto the command_line table(the store of the settings).
+--! Loads the several game directories.
+--! Initializes SDL and creates a window.
+--! Compares the API binary version with the API version that the current Lua script was written for. 
+--! Processes several compile options.
+--! Loads sound and video systems, strings, map, entities and other files, then world and UI.
+--! Asks for correct installation directory with a UI, if applicable.
+--! Loads savegame if applicable. 
+--! Prompts errors if any.
 
 function App:init()
   -- App initialisation 1st goal: Get the loading screen up
